@@ -335,9 +335,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>USE_STDPERIPH_DRIVER,STM32F10X_HD</Define>
+              <Define>STM32F10X_HD,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\usr;..\stdlib;..\cmsis\CoreSupport</IncludePath>
+              <IncludePath>..\cmsis\CoreSupport;..\stdlib;..\usr</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -382,16 +382,6 @@
           <GroupName>Source Group 1</GroupName>
         </Group>
         <Group>
-          <GroupName>mdk</GroupName>
-          <Files>
-            <File>
-              <FileName>startup_stm32f10x_hd_vl.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\cmsis\arm\startup_stm32f10x_hd_vl.s</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>usr</GroupName>
           <Files>
             <File>
@@ -428,6 +418,16 @@
               <FileName>core_cm3.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\cmsis\CoreSupport\core_cm3.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>mdk</GroupName>
+          <Files>
+            <File>
+              <FileName>startup_stm32f10x_hd_vl.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\cmsis\arm\startup_stm32f10x_hd_vl.s</FilePath>
             </File>
           </Files>
         </Group>

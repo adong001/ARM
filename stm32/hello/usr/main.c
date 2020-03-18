@@ -35,8 +35,8 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-GPIO_InitTypeDef GPIO_InitStructure;
 
+GPIO_InitTypeDef GPIO_test;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -45,6 +45,16 @@ GPIO_InitTypeDef GPIO_InitStructure;
   * @param  None
   * @retval None
   */
+	
+void Delay(unsigned int ms)//延时函数
+{
+	unsigned int i,j;
+	for(i = ms; i > 0; i--)
+	{
+		for(j = 110;j > 0; j--);
+	}
+}
+	
 int main(void)
 {
   /*!< At this stage the microcontroller clock setting is already configured, 
@@ -55,70 +65,106 @@ int main(void)
      */     
        
   /* GPIOD Periph clock enable */
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOD, ENABLE);
+	//使用APB2始终总线的GPIOA，GPIOB口和GPIOC口
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOB|RCC_APB2Periph_GPIOC, ENABLE);
+	
+	
+	//初始化控制开关K2的A0口
+	GPIO_test.GPIO_Pin = GPIO_Pin_0;
+	GPIO_test.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_test.GPIO_Mode = GPIO_Mode_IPU;//A0由开关控制，Mode设置为上拉输入，开关按下A0口被下拉为低电平
+	GPIO_Init(GPIOA,&GPIO_test);
+	
+	//初始化控制开关LED灯D2的B0口
+	GPIO_test.GPIO_Pin = GPIO_Pin_0;
+	GPIO_test.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_test.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIOB,&GPIO_test);
+	
+	//初始化控制LED灯的C3,C4口
+	GPIO_test.GPIO_Pin = GPIO_Pin_3|GPIO_Pin_4;
+	GPIO_test.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_test.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_Init(GPIOC,&GPIO_test);
 
+	
   /* Configure PD0 and PD2 in output pushpull mode */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_2;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_Init(GPIOD, &GPIO_InitStructure);
+//  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_2;
+//  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+//  GPIO_Init(GPIOD, &GPIO_InitStructure);
 
   /* To achieve GPIO toggling maximum frequency, the following  sequence is mandatory. 
      You can monitor PD0 or PD2 on the scope to measure the output signal. 
      If you need to fine tune this frequency, you can add more GPIO set/reset 
      cycles to minimize more the infinite loop timing.
      This code needs to be compiled with high speed optimization option.  */
-  while (1)
+	while (1)
   {
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
 
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
+		if(GPIO_ReadInputDataBit(GPIOA,GPIO_Pin_0) == 0x00000000)//GPIOA不断读取A0口的值，当A0口被下拉成低电平时，让B0控制的D2灯闪烁
+		{
+			GPIO_ResetBits(GPIOB,GPIO_Pin_0);//设置B0为0,灯亮（BRR--清除B0端口的0x00000001）
+			Delay(1000);
+			GPIO_SetBits(GPIOB,GPIO_Pin_0);//设置B0为1,灯灭（BSRR--设置B0端口为0x00000001）
+			Delay(1000);
+		}
+//    /* Set PD0 and PD2 */
+//    GPIOD->BSRR = 0x00000005;
+//    /* Reset PD0 and PD2 */
+//    GPIOD->BRR  = 0x00000005;
+		else//开关不按下时,让C3,C4控制的D3,D4灯闪烁
+		{
+		  GPIO_ResetBits(GPIOC,GPIO_Pin_3|GPIO_Pin_4);//设置B0为0,灯亮（BRR--清除B0端口的0x00000001）
+			Delay(1000);
+			GPIO_SetBits(GPIOC,GPIO_Pin_3|GPIO_Pin_4);//设置B0为1,灯灭（BSRR--设置B0端口为0x00000001）
+			Delay(1000);
+		}
 
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
+//    /* Set PD0 and PD2 */
+//    GPIOD->BSRR = 0x00000005;
+//    /* Reset PD0 and PD2 */
+//    GPIOD->BRR  = 0x00000005;
 
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
+//    /* Set PD0 and PD2 */
+//    GPIOD->BSRR = 0x00000005;
+//    /* Reset PD0 and PD2 */
+//    GPIOD->BRR  = 0x00000005;
 
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
+//    /* Set PD0 and PD2 */
+//    GPIOD->BSRR = 0x00000005;
+//    /* Reset PD0 and PD2 */
+//    GPIOD->BRR  = 0x00000005;
 
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
+//    /* Set PD0 and PD2 */
+//    GPIOD->BSRR = 0x00000005;
+//    /* Reset PD0 and PD2 */
+//    GPIOD->BRR  = 0x00000005;
 
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
+//    /* Set PD0 and PD2 */
+//    GPIOD->BSRR = 0x00000005;
+//    /* Reset PD0 and PD2 */
+//    GPIOD->BRR  = 0x00000005;
 
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
+//    /* Set PD0 and PD2 */
+//    GPIOD->BSRR = 0x00000005;
+//    /* Reset PD0 and PD2 */
+//    GPIOD->BRR  = 0x00000005;
 
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
+//    /* Set PD0 and PD2 */
+//    GPIOD->BSRR = 0x00000005;
+//    /* Reset PD0 and PD2 */
+//    GPIOD->BRR  = 0x00000005;
 
-    /* Set PD0 and PD2 */
-    GPIOD->BSRR = 0x00000005;
-    /* Reset PD0 and PD2 */
-    GPIOD->BRR  = 0x00000005;
+//    /* Set PD0 and PD2 */
+//    GPIOD->BSRR = 0x00000005;
+//    /* Reset PD0 and PD2 */
+//    GPIOD->BRR  = 0x00000005;
+
+//    /* Set PD0 and PD2 */
+//    GPIOD->BSRR = 0x00000005;
+//    /* Reset PD0 and PD2 */
+//    GPIOD->BRR  = 0x00000005;
   }
 }
 
