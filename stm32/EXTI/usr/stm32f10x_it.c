@@ -154,11 +154,8 @@ void EXTI0_IRQHandler(void)
 {
   if(EXTI_GetITStatus(EXTI_Line0) != RESET)
   {
-    /* Toggle LED1 */
-     //STM_EVAL_LEDToggle(LED1);
-
-    /* Clear the  EXTI line 0 pending bit */
-    EXTI_ClearITPendingBit(EXTI_Line0);
+    GPIOB->ODR ^= 0x0001;//A0上升沿触发中断，导致B0置1
+    EXTI_ClearITPendingBit(EXTI_Line0);//清除外部中断标志位
   }
 }
 
@@ -172,11 +169,8 @@ void EXTI15_10_IRQHandler(void)
 
   if(EXTI_GetITStatus(EXTI_Line13) != RESET)
   {
-    /* Toggle LED2 */
-     //STM_EVAL_LEDToggle(LED2);
-
-    /* Clear the  EXTI line 8 pending bit */
-    EXTI_ClearITPendingBit(EXTI_Line13);
+    GPIOB->ODR ^= 0x1000;//C13下降沿触发中断C3置1
+    EXTI_ClearITPendingBit(EXTI_Line13);//清除外部中断标志位
   }
 }
 
