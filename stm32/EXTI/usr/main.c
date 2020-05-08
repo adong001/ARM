@@ -93,7 +93,7 @@ int main(void)
 
   EXTI15_10_Config();
 
-  EXTI_GenerateSWInterrupt(EXTI_Line0);
+  EXTI_GenerateSWInterrupt(EXTI_Line0|EXTI_Line13);
           
   while (1)
   {

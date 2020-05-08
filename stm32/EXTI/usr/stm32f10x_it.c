@@ -169,7 +169,7 @@ void EXTI15_10_IRQHandler(void)
 
   if(EXTI_GetITStatus(EXTI_Line13) != RESET)
   {
-    GPIOB->ODR ^= 0x1000;//C13下降沿触发中断C3置1
+    GPIOC->ODR ^= 0x0008;//C13下降沿触发中断C3置1
     EXTI_ClearITPendingBit(EXTI_Line13);//清除外部中断标志位
   }
 }
